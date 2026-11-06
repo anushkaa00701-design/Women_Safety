@@ -1,4 +1,5 @@
-
+```css
+/* Reset */
 * {
     margin: 0;
     padding: 0;
@@ -59,13 +60,14 @@ nav a:hover {
     cursor: pointer;
 }
 
-/* Hero section */
+/* Hero Section */
 .hero {
     min-height: 500px;
     display: flex;
     justify-content: space-between;
     align-items: center;
     padding: 70px 10%;
+    gap: 40px;
     background: linear-gradient(120deg, #eeebff, #f8f9ff);
 }
 
@@ -85,14 +87,22 @@ nav a:hover {
     color: #555;
 }
 
+/* Shield Logo - Fixed Size */
 .shield {
-    font-size: 150px;
+    font-size: 60px;
     background: white;
-    padding: 45px;
+    width: 150px;
+    height: 150px;
+    padding: 20px;
     border-radius: 50%;
     box-shadow: 0 10px 35px #d9d3ff;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-shrink: 0;
 }
 
+/* Buttons */
 .btn {
     display: inline-block;
     background: #6554c0;
@@ -145,7 +155,16 @@ nav a:hover {
     color: #6554c0;
 }
 
-/* Call to action */
+/* Feature Icons */
+.feature-card img {
+    width: 65px;
+    height: 65px;
+    object-fit: contain;
+    display: block;
+    margin: 0 auto 15px;
+}
+
+/* Call To Action */
 .cta {
     text-align: center;
     padding: 55px 20px;
@@ -174,7 +193,7 @@ footer {
     color: white;
 }
 
-/* Common page styling */
+/* Common Page Styling */
 .page-container {
     max-width: 950px;
     margin: 50px auto;
@@ -255,7 +274,13 @@ footer {
     margin-bottom: 10px;
 }
 
-/* Safety tips */
+.card-icon {
+    width: 28px;
+    height: 28px;
+    object-fit: contain;
+}
+
+/* Safety Tips */
 .tips-grid {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
@@ -278,8 +303,16 @@ footer {
     margin: 8px 0 8px 20px;
 }
 
-/* Responsive design */
+/* Header Logo Image */
+.brand img {
+    width: 35px;
+    height: 35px;
+    object-fit: contain;
+}
+
+/* Responsive Design */
 @media (max-width: 768px) {
+
     header {
         padding: 15px 5%;
     }
@@ -309,16 +342,19 @@ footer {
         flex-direction: column;
         text-align: center;
         padding: 50px 7%;
-        gap: 35px;
+        gap: 30px;
     }
 
     .hero h1 {
         font-size: 34px;
     }
 
+    /* Small Shield on Mobile */
     .shield {
-        font-size: 90px;
-        padding: 25px;
+        font-size: 50px;
+        width: 110px;
+        height: 110px;
+        padding: 15px;
     }
 
     .feature-container,
@@ -336,4 +372,4 @@ footer {
         padding: 25px;
     }
 }
-
+```
