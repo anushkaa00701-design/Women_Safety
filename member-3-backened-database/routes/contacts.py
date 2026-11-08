@@ -11,33 +11,45 @@ def add_contact():
 
     name = data.get("name")
     phone = data.get("phone")
+    email = data.get("email")
 
-    if not name or not phone:
-        return jsonify({"error": "Name and phone are required"}), 400
+    if not name or not phone or not email:
+        return jsonify({
+            "error": "Name, phone and email are required"
+        }), 400
 
     conn = get_db()
-    cursor = conn.execute(
-        "INSERT INTO contacts (user_id, name, phone) VALUES (?, ?, ?)",
-        (session["user_id"], name, phone)
-    )
-    conn.commit()
-    contact_id = cursor.lastrowid
-    conn.close()
 
-    return jsonify({
-        "message": "Contact added successfully",
-        "contact_id": contact_id
-    }), 201
+    try:
+        cursor = conn.execute(
+            """INSERT INTO contacts
+            (user_id, name, phone, email)
+            VALUES (?, ?, ?, ?)""",
+            (session["user_id"], name, phone, email)
+        )
+
+        conn.commit()
+
+        return jsonify({
+            "message": "Contact added successfully",
+            "contact_id": cursor.lastrowid
+        }), 201
+
+    finally:
+        conn.close()
 
 
 @contacts_bp.route("/contacts", methods=["GET"])
 @login_required
 def get_contacts():
     conn = get_db()
+
     contacts = conn.execute(
-        "SELECT id, name, phone FROM contacts WHERE user_id = ?",
+        """SELECT id, name, phone, email
+        FROM contacts WHERE user_id = ?""",
         (session["user_id"],)
     ).fetchall()
+
     conn.close()
 
     return jsonify([dict(contact) for contact in contacts])
@@ -47,10 +59,12 @@ def get_contacts():
 @login_required
 def delete_contact(contact_id):
     conn = get_db()
+
     cursor = conn.execute(
         "DELETE FROM contacts WHERE id = ? AND user_id = ?",
         (contact_id, session["user_id"])
     )
+
     conn.commit()
     deleted = cursor.rowcount
     conn.close()

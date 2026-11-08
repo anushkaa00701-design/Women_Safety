@@ -7,6 +7,7 @@ from database.db import init_db
 from routes.auth import auth_bp
 from routes.contacts import contacts_bp
 from routes.incidents import incidents_bp
+from routes.notifications import notifications_bp
 
 load_dotenv()
 
@@ -21,6 +22,7 @@ init_db()
 app.register_blueprint(auth_bp, url_prefix="/api")
 app.register_blueprint(contacts_bp, url_prefix="/api")
 app.register_blueprint(incidents_bp, url_prefix="/api")
+app.register_blueprint(notifications_bp, url_prefix="/api")
 
 
 @app.route("/")

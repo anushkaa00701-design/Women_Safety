@@ -1,8 +1,24 @@
+
+import threading
 from flask import Blueprint, request, jsonify, session
 from database.db import get_db
 from routes.utils import login_required
 
 incidents_bp = Blueprint("incidents", __name__)
+
+# Background worker function for sending emails without blocking the server
+def dispatch_emails_to_contacts():
+    # TODO: Put your actual email/SMTP sending logic here
+    print("Sending SOS emails in the background...")
+
+@incidents_bp.route("/sos", methods=["POST"])
+@login_required
+def trigger_sos():
+    # Start the email dispatching in a separate thread so the UI responds instantly
+    email_thread = threading.Thread(target=dispatch_emails_to_contacts)
+    email_thread.start()
+    
+    return jsonify({"status": "SOS triggered successfully"}), 200
 
 @incidents_bp.route("/incidents", methods=["POST"])
 @login_required
@@ -37,7 +53,6 @@ def add_incident():
 @login_required
 def get_incidents():
     conn = get_db()
-    # Added 'status' to the SELECT query so the client can see active/cancelled states
     incidents = conn.execute(
         """SELECT id, description, latitude, longitude, status, created_at 
         FROM incidents WHERE user_id = ? 
@@ -48,13 +63,12 @@ def get_incidents():
 
     return jsonify([dict(incident) for incident in incidents])
 
-# NEW ROUTE: Support SOS Cancellation
+# Support SOS Cancellation
 @incidents_bp.route("/incidents/<int:incident_id>/cancel", methods=["PATCH", "PUT"])
 @login_required
 def cancel_incident(incident_id):
     conn = get_db()
     
-    # Check if the incident belongs to the logged-in user
     incident = conn.execute(
         "SELECT * FROM incidents WHERE id = ? AND user_id = ?",
         (incident_id, session["user_id"])
@@ -64,7 +78,6 @@ def cancel_incident(incident_id):
         conn.close()
         return jsonify({"error": "Incident not found or unauthorized"}), 404
         
-    # Update status to cancelled
     conn.execute(
         "UPDATE incidents SET status = 'cancelled' WHERE id = ?",
         (incident_id,)
